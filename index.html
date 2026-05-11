@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jerusalem Watch · JCAP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #000154;
+    --gold: #b8932a;
+    --text: #1a1a2e;
+    --text-muted: #6b6b80;
+    --border: rgba(0,1,84,0.12);
+  }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: #fff;
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.6;
+    padding: 0;
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  .jw-wrap { max-width: 720px; margin: 0 auto; padding: 20px 20px 32px; }
+
+  .jw-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--navy);
+    margin-bottom: 16px;
+  }
+
+  .jw-brand { display: flex; align-items: center; gap: 10px; }
+  .jw-bar { width: 3px; height: 32px; background: var(--gold); flex-shrink: 0; }
+
+  .jw-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+
+  .jw-tagline {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  .jw-powered { font-size: 10px; color: var(--text-muted); text-align: right; line-height: 1.4; }
+  .jw-powered span { display: block; font-weight: 600; color: var(--navy); font-size: 11px; }
+
+  .jw-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .jw-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .jw-filter {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.15s;
+    letter-spacing: 0.03em;
+  }
+
+  .jw-filter:hover { border-color: var(--navy); color: var(--navy); }
+  .jw-filter.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+
+  .jw-refresh-btn {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border: 1px solid var(--gold);
+    border-radius: 20px;
+    background: none;
+    color: var(--gold);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .jw-refresh-btn:hover { background: var(--gold); color: #fff; }
+  .jw-refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin { animation: spin 0.8s linear infinite; display: inline-block; }
+
+  .jw-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; letter-spacing: 0.02em; }
+
+  .jw-feed { border-top: 1px solid var(--border); }
+
+  .jw-item {
+    display: flex;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--border);
+    animation: fadeUp 0.25s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .jw-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+  .jw-item-body { flex: 1; min-width: 0; }
+
+  .jw-headline {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.45;
+    margin-bottom: 5px;
+    cursor: pointer;
+    transition: color 0.1s;
+  }
+
+  .jw-headline:hover { color: var(--navy); text-decoration: underline; text-underline-offset: 2px; }
+
+  .jw-item-meta { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+  .jw-source { font-size: 11px; color: var(--text-muted); }
+
+  .jw-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .jw-time { font-size: 10px; color: #aaa; }
+
+  .jw-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 13px; }
+
+  .jw-spinner {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border);
+    border-top-color: var(--navy);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 12px;
+  }
+
+  .jw-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .jw-updated { font-size: 10px; color: #bbb; }
+
+  .jw-jcap-link {
+    font-size: 10px;
+    color: var(--gold);
+    text-decoration: none;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .jw-jcap-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="jw-wrap">
+
+  <div class="jw-header">
+    <div class="jw-brand">
+      <div class="jw-bar"></div>
+      <div>
+        <div class="jw-name">Jerusalem Watch</div>
+        <div class="jw-tagline">Real-time news feed</div>
+      </div>
+    </div>
+    <div class="jw-powered">
+      <span>JCAP</span>
+      Powered by live web search
+    </div>
+  </div>
+
+  <div class="jw-controls">
+    <div class="jw-filters">
+      <button class="jw-filter active" data-cat="all" onclick="filterItems('all')">All</button>
+      <button class="jw-filter" data-cat="security" onclick="filterItems('security')">Security</button>
+      <button class="jw-filter" data-cat="diplomacy" onclick="filterItems('diplomacy')">Diplomacy</button>
+      <button class="jw-filter" data-cat="politics" onclick="filterItems('politics')">Politics</button>
+      <button class="jw-filter" data-cat="society" onclick="filterItems('society')">City & Society</button>
+    </div>
+    <button class="jw-refresh-btn" id="refreshBtn" onclick="loadNews()">
+      <svg id="refreshIcon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      Refresh
+    </button>
+  </div>
+
+  <div class="jw-meta" id="itemMeta"></div>
+  <div class="jw-feed" id="feedContainer">
+    <div class="jw-state"><div class="jw-spinner"></div>Loading latest Jerusalem news...</div>
+  </div>
+
+  <div class="jw-footer">
+    <div class="jw-updated" id="lastUpdated"></div>
+    <a class="jw-jcap-link" href="https://www.jcap.ngo" target="_blank">jcap.ngo →</a>
+  </div>
+
+</div>
+
+<script>
+const CATS = {
+  security:  { color: '#c0392b', bg: '#fdecea', label: 'Security' },
+  diplomacy: { color: '#1a5276', bg: '#e8eef7', label: 'Diplomacy' },
+  politics:  { color: '#154360', bg: '#eef4fb', label: 'Politics' },
+  society:   { color: '#145a32', bg: '#edf7ee', label: 'City & Society' },
+  general:   { color: '#666',    bg: '#f4f4f4', label: 'General' }
+};
+
+const APPROVED_SOURCES = [
+  "jerusalem post", "times of israel", "ynet", "haaretz",
+  "arutz sheva", "israel national news", "algemeiner",
+  "jewish telegraphic agency", "jta", "the media line", "i24",
+  "reuters", "associated press", "bbc", "cnn",
+  "new york times", "washington post", "fox news", "axios"
+];
+
+const BLOCKED_SOURCES = [
+  "al jazeera", "middle east eye", "electronic intifada",
+  "mondoweiss", "+972", "972mag"
+];
+
+let allItems = [];
+let currentFilter = 'all';
+
+function classify(h, s) {
+  const t = (h + ' ' + (s || '')).toLowerCase();
+  if (/terror|attack|shooting|stab|hamas|security|police|arrest|idf|militant|weapon|threat|bomb|riot/.test(t)) return 'security';
+  if (/diplomat|consulate|embassy|\bun\b|united nations|treaty|foreign minister|accord|sanction|envoy|state department/.test(t)) return 'diplomacy';
+  if (/knesset|coalition|election|government|municipality|mayor|netanyahu|vote|parliament|minister|policy/.test(t)) return 'politics';
+  if (/neighborhood|housing|construct|residents|community|east jerusalem|urban|planning|temple mount|waqf|settler/.test(t)) return 'society';
+  return 'general';
+}
+
+function isApproved(source) {
+  const s = (source || '').toLowerCase();
+  if (BLOCKED_SOURCES.some(b => s.includes(b))) return false;
+  return APPROVED_SOURCES.some(a => s.includes(a));
+}
+
+function timeLabel(h) {
+  if (h <= 1) return '1 hour ago';
+  if (h < 24) return h + ' hours ago';
+  return Math.round(h / 24) + ' days ago';
+}
+
+async function loadNews() {
+  const btn = document.getElementById('refreshBtn');
+  const icon = document.getElementById('refreshIcon');
+  const feed = document.getElementById('feedContainer');
+
+  btn.disabled = true;
+  icon.classList.add('spin');
+  feed.innerHTML = '<div class="jw-state"><div class="jw-spinner"></div>Fetching latest news...</div>';
+
+  const prompt = `Search the web for the latest news about Jerusalem from the past 48 hours.
+
+You MUST only return stories from these approved outlets:
+Jerusalem Post, Times of Israel, Ynet News, Haaretz, Arutz Sheva, Israel National News, Algemeiner, Jewish Telegraphic Agency (JTA), The Media Line, i24 News, Reuters, Associated Press, BBC, CNN, New York Times, Washington Post, Fox News, Axios.
+
+Do NOT include any stories from Al Jazeera, Middle East Eye, Electronic Intifada, Mondoweiss, +972 Magazine, or any outlet with an anti-Israel editorial stance. If you cannot find enough stories from approved sources on a topic, skip that topic.
+
+Return exactly 10 news items as a raw JSON array (no markdown, no code fences, no explanation). Each object:
+- "headline": concise English headline, max 12 words
+- "source": exact outlet name from the approved list above
+- "summary": one sentence, max 20 words
+- "url": article URL or "#"
+- "hoursAgo": integer 1–48
+
+Cover: security incidents, diplomatic developments, political decisions, city and urban affairs — all Jerusalem-specific.
+Return ONLY the JSON array.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': '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', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await res.json();
+    const textBlock = (data.content || []).find(b => b.type === 'text');
+    if (!textBlock) throw new Error('no text block');
+
+    let raw = textBlock.text.trim().replace(/```json|```/g, '').trim();
+    const s = raw.indexOf('['), e = raw.lastIndexOf(']');
+    if (s === -1 || e === -1) throw new Error('no array');
+    raw = raw.slice(s, e + 1);
+
+    const parsed = JSON.parse(raw);
+
+    allItems = parsed
+      .filter(item => isApproved(item.source))
+      .map(item => ({ ...item, category: classify(item.headline, item.summary) }));
+
+    renderItems();
+
+    const now = new Date();
+    document.getElementById('lastUpdated').textContent =
+      'Updated ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  } catch (err) {
+    feed.innerHTML = '<div class="jw-state">Failed to load news. <button onclick="loadNews()" style="background:none;border:none;color:#b8932a;cursor:pointer;font-weight:600;font-family:inherit;">Try again</button></div>';
+    console.error(err);
+  }
+
+  btn.disabled = false;
+  icon.classList.remove('spin');
+}
+
+function renderItems() {
+  const items = currentFilter === 'all' ? allItems : allItems.filter(i => i.category === currentFilter);
+  const feed = document.getElementById('feedContainer');
+  const meta = document.getElementById('itemMeta');
+
+  meta.textContent = items.length + (items.length === 1 ? ' story' : ' stories');
+
+  if (!items.length) {
+    feed.innerHTML = '<div class="jw-state">No stories in this category right now.</div>';
+    return;
+  }
+
+  feed.innerHTML = items.map((item, idx) => {
+    const cat = CATS[item.category] || CATS.general;
+    const hasUrl = item.url && item.url !== '#';
+    return `<div class="jw-item" style="animation-delay:${idx * 40}ms">
+      <div class="jw-dot" style="background:${cat.color}"></div>
+      <div class="jw-item-body">
+        <div class="jw-headline" onclick="${hasUrl ? `window.open('${item.url}','_blank')` : ''}">${item.headline}</div>
+        <div class="jw-item-meta">
+          <span class="jw-source">${item.source}</span>
+          <span class="jw-badge" style="background:${cat.bg};color:${cat.color}">${cat.label}</span>
+          <span class="jw-time">${timeLabel(item.hoursAgo)}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterItems(cat) {
+  currentFilter = cat;
+  document.querySelectorAll('.jw-filter').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+  renderItems();
+}
+
+loadNews();
+</script>
+</body>
+</html>
